@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<f:view>
+    <h:head>
+        <title>  فاکتور </title>
+        <!--    <h:outputStylesheet library="css" name="CustomerInf.css"/>-->
+    </h:head>
+    <p:link outcome="Home" value="اصلی" style="align-content: center"/>
+    <h:body style="font-family: IRANSansWeb">
+        <h:form id="FactForm" dir="RTL" style="font-family: IRANSansWeb">
+            <div>
+                <p:growl id="growl1" sticky="true"
+                         showDetail="true"/>
+                <p:dataTable style="font-family: 'IRANSansWeb UltraLight'"
+                             id="headerList"
+                             var="headers3"
+                             styleClass="ui-datatable-striped ui-datatable-gridlines ui-datatable-sm"
+                             value="#{factView.headers}"
+                             rows="10"
+                             selectionMode="single"
+                             paginator="true"
+                             paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="({startRecord}-{endRecord})"
+                             rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                             selection="#{factView.header}"
+                             rowKey="#{headers3.id}"
+                             editable="true">
+
+                    <f:facet name="header" >
+                        فاکتور
+                    </f:facet>
+                    <p:ajax event="rowSelect"
+                            listener="#{factView.onRowSelect}"
+                            update=":FactForm:growl1 :FactForm:pnlGrd :FactForm:pnlgr :FactForm:detailList"/>
+                    <p:ajax event="rowUnselect"
+                            listener="#{factView.onRowUnselect}"
+                            update=":FactForm:growl1 :FactForm:pnlGrd"/>
+
+                    <p:column headerText="شماره"
+                              sortBy="#{headers3.no}"
+                              filterBy="#{headers3.no}">
+                        <h:outputText value="#{headers3.no}"/>
+                    </p:column>
+
+                    <p:column headerText="تاریخ"
+                              sortBy="#{headers3.factDate}"
+                              filterBy="#{headers3.factDate}">
+                        <h:outputText value="#{headers3.factDate}"/>
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+            <h:panelGrid
+                    id="pnlGrd"
+                    columns="10"
+                    cellpadding="20"
+            >
+                <p:commandButton value="+"
+                                 actionListener="#{factView.CreateHeader}"
+                                 process="@this"
+                                 update="pnlGrd headerList growl1 detailList"
+                                 disabled="#{factView.readOnlyCreate}"/>
+                <p:commandButton value="بیخیال"
+                                 immediate="true"
+                                 update="pnlGrd headerList"
+                                 actionListener="#{factView.cancle}"
+                                 disabled="#{factView.readOnlyCancle}"/>
+                <p:commandButton value="حذف"
+                                 actionListener="#{factView.delete}"
+                                 disabled="#{factView.readOnlyDelete}"
+                                 update="headerList pnlGrd" process="@this"/>
+                <p:commandButton value="اصلاح"
+                                 actionListener="#{factView.EditHeader}"
+                                 update="headerList pnlGrd "
+                                 process="@this"
+                                 disabled="#{factView.readOnlyEdit}"/>
+                <p:commandButton value="ثبت"
+                                 styleClass="ui-button"
+                                 actionListener="#{factView.save}"
+                                 disabled="#{factView.readOnlySave}"
+                                 update="growl1 pnlGrd headerList"
+                                 process="pnlgr @this"
+                />
+                <p:commandButton value="مشابه"
+                                 disabled="#{factView.readOnlyCopy}"
+                                 actionListener="#{factView.copy}"
+                                 update="growl1 pnlGrd headerList"
+                                 process="@this"
+                />
+            </h:panelGrid>
+            <h:panelGroup id="pnlgr">
+                <!--p:outputLabel value="2023/09/12" converter="jalaliDateConverter"/-->
+                <p:outputLabel value="مشتری" for="@next"/>
+                <p:autoComplete dropdown="true"
+                                completeMethod="#{custView.CustomerList}"
+                                value="#{factView.header.customers}"
+                                var="customer" itemLabel="#{customer.name}" itemValue="#{customer}"/>
+
+                <p:outputLabel value="شماره فاکتور" style="color: red" for="@next"/>
+                <p:inputText value="#{factView.header.no}" style="color: red"/>
+
+                <p:outputLabel value="تاریخ" style="color: brown" for="@next"/>
+                <p:inputText value="#{factView.header.factDate}" style="color: brown"/>
+                <p:calendar id="jalaliDate" pattern="yyyy/MM/dd" locale="fa"/>
+            </h:panelGroup>
+            <div>
+                <p:dataTable
+
+                             id="detailList"
+                             var="detalis3"
+                             value="#{factView.header.details}"
+                             styleClass="ui-datatable-striped ui-datatable-gridlines ui-datatable-sm"
+                             rows="10"
+                             selection="#{detailView.selectedDetail}"
+                             rowKey="#{detalis3.hashCode()}"
+                             widgetVar="wvdetailList"
+                             editMode="cell"
+                             style="margin-top: 20px;margin-bottom: 20px ;font-family: 'IRANSansWeb UltraLight'"
+                             editable="true">
+                    <f:facet name="header">
+                        اقلام فاکتور
+                    </f:facet>
+                    <p:column selectionMode="single" style="width:16px;text-align:center ; alignment: center"/>
+                    <p:column headerText="کالا" >
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{detalis3.good.name}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:autoComplete dropdown="true"
+                                                completeMethod="#{goodView.GoodList}"
+                                                value="#{detalis3.good}"
+                                                var="good" itemLabel="#{good.name}" itemValue="#{good}">
+                                    <p:ajax update="detailList"></p:ajax>
+                                </p:autoComplete>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="مقدار">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{detalis3.amount}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{detalis3.amount}">
+                                    <p:ajax update="detailList"></p:ajax>
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="واحد">
+                        <p:outputLabel value="#{detalis3.good.unitRate}"/>
+                    </p:column>
+                    <p:column headerText="نرخ">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{detalis3.fee}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{detalis3.fee}">
+                                    <p:ajax update="detailList"></p:ajax>
+                                </p:inputText>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <p:column headerText="مبلغ">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{detalis3.price}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{detalis3.price}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <f:facet name="footer">
+                        <h:panelGroup
+                                id="pnlGrd2"
+                                columns="10"
+                                cellpadding="20">
+
+                            <p:commandButton value="+"
+                                             actionListener="#{detailView.Create()}"
+                                             process="@this"
+                                             icon="fa fa-plus"
+                                             update="detailList"
+
+                            />
+                            <!--                            update="detailList pnlGrd2"-->
+                            <p:commandButton value="بیخیال"
+                                             immediate="true"
+                                             update="pnlGrd2 detailList"
+                                             actionListener="#{detailView.cancle}"
+                                             disabled="#{detailView.readOnlyCancle}"/>
+                            <p:commandButton value="حذف"
+                                             actionListener="#{detailView.delete}"
+                                             disabled="#{detailView.readOnlyDelete}"
+                                             update="detailList pnlGrd2" process="@this"/>
+                            <p:commandButton value="اصلاح"
+                                             actionListener="#{detailView.Edit}"
+                                             update="detailList pnlGrd2 "
+                                             process="@this"
+                                             disabled="#{detailView.readOnlyEdit}"/>
+                            <p:commandButton value=" مشابه"
+                                             disabled="#{detailView.readOnlyCopy}"
+                                             actionListener="#{detailView.copy}"
+                                             update="pnlGrd2 detailList"
+                                             process="@this"
+                            />
+                        </h:panelGroup>
+                    </f:facet>
+                </p:dataTable>
+            </div>
+        </h:form>
+        <p:dock position="bottom" dir="RTL">
+            <p:menuitem value="اصلی" icon="/resources/demo/images/home.png" outcome="Home"/>
+            <p:menuitem value="مشتری" icon="/resources/demo/images/portfolio.png" outcome="CustomerInf"/>
+            <p:menuitem value="کالا" icon="/resources/demo/images/link.png" outcome="GoodInf"/>
+            <p:menuitem value="فاکتور" icon="/resources/demo/images/history.png" outcome="Fact"/>
+        </p:dock>
+    </h:body>
+</f:view>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<f:view>
+    <h:head>
+        <title>Customers Information </title>
+        <!--    <h:outputStylesheet library="css" name="CustomerInf.css"/>-->
+    </h:head>
+    <style type="text/css">
+        button.ui-button {
+            margin-right: .5rem;
+        }
+    </style>
+    <h:body style="font-family: IRANSansWeb">
+
+        <p:link outcome="Home" value="اصلی"/>
+        <H1 dir="rtl" style="
+            alignment: center"
+            align="center">
+            اطلاعات مشتریان
+        </H1>
+        <h:form id="CustomerForm" dir="RTL">
+            <div>
+                <p:growl id="growl1" sticky="true"
+                         showDetail="true"/>
+                <p:dataTable dir="rtl"
+                             id="customerList"
+                             var="customs"
+                             value="#{custView.customers}"
+                             rows="10"
+                             styleClass="ui-datatable-striped ui-datatable-gridlines ui-datatable-sm"
+                             selectionMode="single"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="({startRecord}-{endRecord})"
+                             rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                             selection="#{custView.customer}"
+                             rowKey="#{customs.id}"
+                             style="font-family: 'IRANSansWeb UltraLight'"
+                             editable="true">
+                    <p:ajax event="rowSelect"
+                            listener="#{custView.onRowSelect}"
+                            update=":CustomerForm:growl1 :CustomerForm:pnlGrd"/>
+                    <p:ajax event="rowUnselect"
+                            listener="#{custView.onRowUnselect}"
+                            update=":CustomerForm:growl1 :CustomerForm:pnlGrd"/>
+                    <p:column headerText="id"
+                              sortBy="#{customs.id}"
+                              filterBy="#{customs.id}">
+                        <h:outputText value="#{customs.id}"
+                                      style="vertical-align: middle;
+                                      margin-left: .5rem"/>
+                    </p:column>
+
+                    <p:column headerText="code"
+                              sortBy="#{customs.code}"
+                              filterBy="#{customs.code}">
+                        <h:outputText value="#{customs.code}"/>
+                    </p:column>
+
+                    <p:column headerText="name"
+                              sortBy="#{customs.name}"
+                              filterBy="#{customs.name}">
+                        <h:outputText value="#{customs.name}"/>
+                    </p:column>
+                </p:dataTable>
+
+            </div>
+            <H2 dir="rtl">مشتری جدید</H2>
+            <hr/>
+            <h:panelGrid dir="rtl"
+                         id="pnlGrd"
+                         columns="10"
+                         cellpadding="20">
+                <p:inputText id="CustomerNameInput"
+                             value="#{custView.customer.name}"
+                             required="true"
+                             disabled="#{custView.readOnly}"/>
+                <p:outputLabel for="@previous"
+                               value="نام"
+                               style="color: blue"/>
+                <p:inputText id="CustomerCodeInput"
+                             value="#{custView.customer.code}"
+                             required="true"
+                             disabled="#{custView.readOnly}"/>
+                <p:outputLabel for="@previous"
+                               value="کد"
+                               style="color: blue"/>
+                <p:inputText id="CustomerAddress"
+                             value="#{custView.customer.address}"
+                             disabled="#{custView.readOnly}"/>
+                <p:outputLabel for="@previous"
+                               value="ادرس"
+                               style="color: blue"/>
+                <p:inputText id="CustomerEmailInput"
+                             value="#{custView.customer.email}"
+                             disabled="#{custView.readOnly}"/>
+                <p:outputLabel for="@previous"
+                               value="ایمیل"
+                               style="color: blue"/>
+                <p:inputText id="CustomerPhoneInput"
+                             value="#{custView.customer.mobile}"
+                             disabled="#{custView.readOnly}"/>
+                <p:outputLabel for="@previous"
+                               value="موبایل"
+                               style="color: blue"/>
+                <p:inputText id="CustomernationalIdInput"
+                             value="#{custView.customer.nationalId}"
+                             disabled="#{custView.readOnly}"/>
+                <p:outputLabel for="@previous"
+                               value="کد ملی"
+                               style="color: blue"/>
+                <p:commandButton value="new"
+                                 actionListener="#{custView.CreateCustomer}"
+                                 process="@this"
+                                 update="pnlGrd customerList growl1"
+                                 disabled="#{custView.readOnlyCreate}"/>
+                <p:commandButton value="cancle"
+                                 immediate="true"
+                                 update="pnlGrd customerList"
+                                 actionListener="#{custView.cancle}"
+                                 disabled="#{custView.readOnlyCancle}"/>
+                <p:commandButton value="delete"
+                                 actionListener="#{custView.delete}"
+                                 disabled="#{custView.readOnlyDelete}"
+                                 update="customerList pnlGrd" process="@this"/>
+                <p:commandButton value="edit"
+                                 actionListener="#{custView.EditCustomer}"
+                                 update="customerList pnlGrd "
+                                 process="@this"
+                                 disabled="#{custView.readOnlyEdit}"/>
+                <p:commandButton value="save"
+                                 styleClass="ui-button"
+                                 actionListener="#{custView.save}"
+                                 disabled="#{custView.readOnlySave}"
+                                 update="growl1 pnlGrd customerList"
+                                 process="pnlGrd"
+                                 partialSubmit="true"/>
+                <p:commandButton value="copy"
+                                 disabled="#{custView.readOnlyCopy}"
+                                 actionListener="#{custView.copy}"
+                                 update="growl1 pnlGrd customerList"
+                                 process="@this"
+                />
+            </h:panelGrid>
+        </h:form>
+        <p:dock position="bottom" dir="RTL">
+            <p:menuitem value="اصلی" icon="/resources/demo/images/home.png" outcome="Home"/>
+            <p:menuitem value="مشتری" icon="/resources/demo/images/portfolio.png" outcome="CustomerInf"/>
+            <p:menuitem value="کالا" icon="/resources/demo/images/link.png" outcome="GoodInf"/>
+            <p:menuitem value="فاکتور" icon="/resources/demo/images/history.png" outcome="Fact"/>
+        </p:dock>
+    </h:body>
+</f:view>
+</html>

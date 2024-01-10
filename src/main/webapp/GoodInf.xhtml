@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<f:view>
+    <h:head>
+        <title>Goods Information </title>
+    </h:head>
+    <p:link outcome="Home" value="اصلی"/>
+    <h:body style="font-family: IRANSansWeb">
+        <H1 dir="rtl"
+            align="center"> اطلاعات کالا</H1>
+
+        <h:form id="GoodForm" dir="RTL">
+            <div>
+                <p:growl id="growl1" sticky="true"
+                         showDetail="true"/>
+                <p:dataTable dir="rtl"
+                             id="goodList"
+                             var="goods3"
+                             style="font-family: 'IRANSansWeb UltraLight'"
+                             styleClass="ui-datatable-striped ui-datatable-gridlines ui-datatable-sm"
+                             value="#{goodView.goods}"
+                             rows="10"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="({startRecord}-{endRecord})"
+                             rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                             selection="#{goodView.good}"
+                             rowKey="#{goods3.id}"
+                             selectionMode="single"
+                             editable="true">
+
+                    <p:column style="width:16px;text-align:center"/>
+                    <p:ajax event="rowSelect"
+                            listener="#{goodView.onRowSelect}"
+                            update=":GoodForm:growl1 :GoodForm:pnlGrd"/>
+                    <p:ajax event="rowUnselect"
+                            listener="#{goodView.onRowUnselect}"
+                            update=":GoodForm:growl1 :GoodForm:pnlGrd"/>
+                    <p:column headerText="id"
+                              sortBy="#{goods3.id}"
+                              filterBy="#{goods3.id}">
+                        <h:outputText value="#{goods3.id}"/>
+
+                    </p:column>
+
+                    <p:column headerText="code"
+                              sortBy="#{goods3.code}"
+                              filterBy="#{goods3.code}">
+                        <h:outputText value="#{goods3.code}"/>
+                    </p:column>
+
+                    <p:column headerText="name"
+                              sortBy="#{goods3.name}"
+                              filterBy="#{goods3.name}">
+                        <h:outputText value="#{goods3.name}"/>
+                    </p:column>
+                    <p:column headerText="unitRate"
+                              sortBy="#{goods3.unitRate}"
+                              filterBy="#{goods3.unitRate}">
+                        <h:outputText value="#{goods3.unitRate}"/>
+                    </p:column>
+                </p:dataTable>
+
+            </div>
+            <H2 dir="rtl">کالای جدید</H2>
+            <hr/>
+            <h:panelGrid
+                         id="pnlGrd"
+                         columns="10"
+                         cellpadding="20">
+                <p:inputText id="GoodNameInput"
+                             value="#{goodView.good.name}"
+                             required="true"
+                             disabled="#{goodView.readOnly}"/>
+                <p:outputLabel for="@previous"
+                               value="نام کالا"
+                               style="color: blue"/>
+                <p:inputText id="GoodCodeInput"
+                             value="#{goodView.good.code}"
+                             required="true"
+                             disabled="#{goodView.readOnly}"/>
+                <p:outputLabel for="@previous"
+                               value="کد"
+                               style="color: blue"/>
+                <p:inputText id="GoodUnitInput"
+                             value="#{goodView.good.unitRate}"
+                             required="true"
+                             disabled="#{goodView.readOnly}"/>
+                <p:outputLabel for="@previous"
+                               value="واحد اندازه گیری"
+                               style="color: blue"/>
+                <p:commandButton value="newGood"
+                                 actionListener="#{goodView.create()}"
+                                 process="@this"
+                                 update=":GoodForm:pnlGrd goodList growl1"
+                                 disabled="#{goodView.readOnlyCreate}"/>
+                <p:commandButton value="cancle"
+                                 immediate="true"
+                                 update="pnlGrd goodList"
+                                 actionListener="#{goodView.cancle}"
+                                 disabled="#{goodView.readOnlyCancle}"/>
+                <p:commandButton value="delete"
+                                 actionListener="#{goodView.delete}"
+                                 disabled="#{goodView.readOnlyDelete}"
+                                 update="goodList pnlGrd" process="@this"/>
+                <p:commandButton value="edit"
+                                 actionListener="#{goodView.EditGood}"
+                                 update="goodList pnlGrd "
+                                 process="@this"
+                                 disabled="#{goodView.readOnlyEdit}"/>
+                <p:commandButton value="save"
+                                 styleClass="ui-button"
+                                 actionListener="#{goodView.save}"
+                                 disabled="#{goodView.readOnlySave}"
+                                 update="growl1 pnlGrd goodList"
+                                 process="pnlGrd"
+                                 partialSubmit="true"/>
+                <p:commandButton value="copy"
+                                 disabled="#{goodView.readOnlyCopy}"
+                                 actionListener="#{goodView.copy}"
+                                 update="growl1 pnlGrd goodList"
+                                 process="@this"
+                />
+            </h:panelGrid>
+        </h:form>
+        <p:dock position="bottom" dir="RTL">
+            <p:menuitem value="اصلی" icon="/resources/demo/images/home.png" outcome="Home"/>
+            <p:menuitem value="مشتری" icon="/resources/demo/images/portfolio.png" outcome="CustomerInf"/>
+            <p:menuitem value="کالا" icon="/resources/demo/images/link.png" outcome="GoodInf"/>
+            <p:menuitem value="فاکتور" icon="/resources/demo/images/history.png" outcome="Fact"/>
+        </p:dock>
+    </h:body>
+</f:view>
+</html>

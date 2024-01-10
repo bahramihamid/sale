@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<f:view>
+    <h:head>
+
+        <title>Goods Information </title>
+    </h:head>
+
+    <h:body>
+        <h:form dir="RTL" style="font-family: IRANSansWeb">
+        <!--p:menu style="text-align: center" styleClass="layout-menu-brown">
+            <p:menuitem value="مشتریان" url="CustomerInf.xhtml" style="text-align: right"/>
+            <p:menuitem value="کالا" url="GoodInf.xhtml" style="text-align: right"/>
+            <p:menuitem value="فاکتور" url="Fact.xhtml" style="text-align: right"/>
+        </p:menu-->
+        <p:tabMenu activeIndex="#{param.i}" style="font-family: 'IRANSansWeb UltraLight'">
+            <p:menuitem value="اصلی" icon="pi pi-fw pi-home" >
+                <f:param name="i" value="0"/>
+            </p:menuitem>
+            <p:menuitem value="مشتریان" url="CustomerInf.xhtml" icon="pi pi-fw pi-calendar">
+                <f:param name="i" value="1"/>
+            </p:menuitem>
+            <p:menuitem value="کالا" url="GoodInf.xhtml" icon="pi pi-fw pi-file">
+                <f:param name="i" value="2"/>
+            </p:menuitem>
+            <p:menuitem value="فاکتور" outcome="Fact"  icon="pi pi-fw pi-cog">
+                <f:param name="i" value="3"/>
+            </p:menuitem>
+        </p:tabMenu>
+            <p:dock position="bottom">
+                <p:menuitem value="اصلی" icon="/resources/demo/images/home.png" outcome="Home" style="font-family: 'IRANSansWeb UltraLight'"/>
+                <p:menuitem value="مشتری" icon="/resources/demo/images/portfolio.png" outcome="CustomerInf" style="font-family: 'IRANSansWeb UltraLight'"/>
+                <p:menuitem value="کالا" icon="/resources/demo/images/link.png" outcome="GoodInf" style="font-family: 'IRANSansWeb UltraLight'"/>
+                <p:menuitem value="فاکتور" icon="/resources/demo/images/history.png" outcome="Fact" style="font-family: 'IRANSansWeb UltraLight'"/>
+            </p:dock>
+        </h:form>
+    </h:body>
+</f:view>
+</html>
